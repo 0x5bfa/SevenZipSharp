@@ -35,7 +35,9 @@ namespace TestApp
             using var archive = new MemoryStream();
             var compressor = new SevenZipCompressor
             {
-                ArchiveFormat = OutArchiveFormat.SevenZip
+                ArchiveFormat = OutArchiveFormat.SevenZip,
+                CompressionMethod = CompressionMethod.Lzma2,
+                EncryptHeaders = true
             };
             compressor.CompressStream(input, archive, password);
 

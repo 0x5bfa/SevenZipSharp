@@ -173,6 +173,14 @@
             }
         }
 
+        public void Clear()
+        {
+            if (VarType != VarEnum.VT_EMPTY)
+            {
+                NativeMethods.PropVariantClear(ref this);
+            }
+        }
+
         /// <summary>
         /// Determines whether the specified System.Object is equal to the current PropVariant.
         /// </summary>

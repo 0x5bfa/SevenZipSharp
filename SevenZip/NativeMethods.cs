@@ -34,6 +34,9 @@ namespace SevenZip
         public static partial IntPtr GetProcAddress(IntPtr hModule, string procName);
 #endif
 
+        [LibraryImport("ole32.dll")]
+        public static partial int PropVariantClear(ref PropVariant propVariant);
+
         public static T SafeCast<T>(PropVariant var, T def)
         {
             object obj;
@@ -53,6 +56,21 @@ namespace SevenZip
             }
 
             return def;
+        }
+
+        public static T GetProperty<T>(IInArchive archive, uint index, ItemPropId property, T defaultValue)
+        {
+            var value = new PropVariant();
+
+            try
+            {
+                archive.GetProperty(index, property, ref value);
+                return SafeCast(value, defaultValue);
+            }
+            finally
+            {
+                value.Clear();
+            }
         }
     }
 #endif

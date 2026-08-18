@@ -226,9 +226,11 @@ namespace SevenZip
 
                     if (_actualIndexes == null || _actualIndexes.Contains(index))
                     {
-                        var data = new PropVariant();
-                        _archive.GetProperty(index, ItemPropId.Path, ref data);
-                        var entryName = NativeMethods.SafeCast(data, "");
+                        var entryName = NativeMethods.GetProperty(
+                            _archive,
+                            index,
+                            ItemPropId.Path,
+                            "");
 
                         #region Get entryName
 
@@ -272,12 +274,17 @@ namespace SevenZip
                             return 0;
                         }
 
-                        _archive.GetProperty(index, ItemPropId.IsDirectory, ref data);
-
-                        if (!NativeMethods.SafeCast(data, false))
+                        if (!NativeMethods.GetProperty(
+                            _archive,
+                            index,
+                            ItemPropId.IsDirectory,
+                            false))
                         {
-                            _archive.GetProperty(index, ItemPropId.LastWriteTime, ref data);
-                            var time = NativeMethods.SafeCast(data, DateTime.MinValue);
+                            var time = NativeMethods.GetProperty(
+                                _archive,
+                                index,
+                                ItemPropId.LastWriteTime,
+                                DateTime.MinValue);
                             
                             if (File.Exists(fileName))
                             {

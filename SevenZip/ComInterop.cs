@@ -43,10 +43,9 @@ namespace SevenZip
                     instance,
                     CreateObjectFlags.UniqueInstance);
             }
-            catch
+            finally
             {
                 Marshal.Release(instance);
-                throw;
             }
         }
 

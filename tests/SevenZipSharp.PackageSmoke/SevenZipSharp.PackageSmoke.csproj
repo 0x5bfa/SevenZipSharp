@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <AssemblyName>SevenZipSharp.PackageSmoke</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SevenZipSharp" Version="2.0.0-alpha.1" />
+    <Compile Include="..\SevenZipSharp.SmokeTests\Program.cs" Link="Program.cs" />
+    <None Include="..\SevenZipSharp.SmokeTests\TestData\multiple_files.7z"
+          Link="TestData\multiple_files.7z"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

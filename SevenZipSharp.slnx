@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SevenZipSharp/SevenZipSharp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SevenZipSharp.SmokeTests/SevenZipSharp.SmokeTests.csproj" />
+  </Folder>
+</Solution>

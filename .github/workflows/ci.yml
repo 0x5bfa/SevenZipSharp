@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+      - rewrite
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test-pack:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore SevenZipSharp.slnx
+
+      - name: Build
+        run: dotnet build SevenZipSharp.slnx --configuration Release --no-restore
+
+      - name: Run managed smoke tests
+        run: dotnet run --project tests/SevenZipSharp.SmokeTests --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/SevenZipSharp --configuration Release --no-build --output artifacts
+
+      - name: Restore package consumer
+        run: dotnet restore tests/SevenZipSharp.PackageSmoke --property:PublishAot=true --property:RestoreAdditionalProjectSources="${{ github.workspace }}\artifacts" --packages artifacts/packages
+
+      - name: Publish package consumer with NativeAOT
+        run: dotnet publish tests/SevenZipSharp.PackageSmoke --configuration Release --runtime win-x64 --no-restore --property:PublishAot=true --property:RestorePackagesPath="${{ github.workspace }}\artifacts\packages" --output artifacts/aot
+
+      - name: Run NativeAOT package consumer
+        run: |
+          ./artifacts/aot/SevenZipSharp.PackageSmoke.exe
+          if (!(Test-Path artifacts/aot/SevenZipSharp-licenses/7-Zip-License.txt)) { throw "The publish output is missing the 7-Zip license." }
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg

@@ -1,0 +1,19 @@
+<Project>
+  <ItemGroup>
+    <SevenZipSharpLegalNotice Include="$(MSBuildThisFileDirectory)..\licenses\7-Zip-License.txt" />
+    <SevenZipSharpLegalNotice Include="$(MSBuildThisFileDirectory)..\licenses\THIRD-PARTY-NOTICES.md" />
+    <SevenZipSharpLegalNotice Include="$(MSBuildThisFileDirectory)..\licenses\SOURCE-OFFER.md" />
+  </ItemGroup>
+
+  <Target Name="CopySevenZipSharpLegalNoticesAfterBuild" AfterTargets="Build">
+    <Copy SourceFiles="@(SevenZipSharpLegalNotice)"
+          DestinationFolder="$(OutDir)SevenZipSharp-licenses"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopySevenZipSharpLegalNoticesAfterPublish" AfterTargets="Publish">
+    <Copy SourceFiles="@(SevenZipSharpLegalNotice)"
+          DestinationFolder="$(PublishDir)SevenZipSharp-licenses"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -69,7 +69,19 @@ namespace SevenZip
 
         private static string DetermineLibraryFilePath()
         {
-            return IsRunningOnArm ? "7zArm64.dll" : Environment.Is64BitProcess ? "7z64.dll" : "7z.dll";
+            var isRunningOnArm = IsRunningOnArm;
+            var is64BitProcess = Environment.Is64BitProcess;
+            var libraryFileName = isRunningOnArm ? "7zArm64.dll" : is64BitProcess ? "7z64.dll" : "7z.dll";
+
+            var runtimeIdentifier = isRunningOnArm ? "win-arm64" : is64BitProcess ? "win-x64" : "win-x86";
+            var runtimeLibraryPath = Path.Combine(AppContext.BaseDirectory, "runtimes", runtimeIdentifier, "native", libraryFileName);
+            if (File.Exists(runtimeLibraryPath))
+            {
+                return runtimeLibraryPath;
+            }
+
+            var appLibraryPath = Path.Combine(AppContext.BaseDirectory, libraryFileName);
+            return File.Exists(appLibraryPath) ? appLibraryPath : libraryFileName;
         }
 
         /// <summary>

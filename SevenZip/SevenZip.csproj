@@ -1,39 +1,44 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <AssemblyName>SevenZipSharp</AssemblyName>
     <TargetFramework>net10.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsAotCompatible>true</IsAotCompatible>
     <NoWarn>$(NoWarn);CS3016</NoWarn>
-    <Configurations>Debug;Release;Desktop</Configurations>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Authors>Joel Ahlgren</Authors>
-    <AssemblyTitle>SevenZipSharp</AssemblyTitle>
-    <Company>Markovtsev Vadim</Company>
-    <Product>SevenZipSharp</Product>
-    <Description>7-zip native library wrapper</Description>
-    <Copyright>Copyright (C) Markovtsev Vadim 2009, 2010, licensed under LGPLv3</Copyright>
-    <RegisterForComInterop>false</RegisterForComInterop>
+    <Configurations>Debug;Release</Configurations>
+    <DefineConstants>$(DefineConstants);UNMANAGED</DefineConstants>
   </PropertyGroup>
+
   <PropertyGroup>
-    <Version>1.0.2</Version>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>portable</DebugType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageId>SevenZipSharp</PackageId>
+    <Title>SevenZipSharp</Title>
+    <Authors>0x5BFA</Authors>
+    <Version>1.0.4</Version>
+    <Description>7-zip native library wrapper</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/files-community/SevenZipSharp</RepositoryUrl>
+    <Copyright>Copyright (C) Markovtsev Vadim 2009, 2010, licensed under LGPLv3;Copyright (c) Files Community (modifications)</Copyright>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <DefineConstants>$(DefineConstants)TRACE;DEBUG;UNMANAGED</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <DefineConstants>$(DefineConstants)TRACE;UNMANAGED</DefineConstants>
-  </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)'=='Desktop'">
-    <DefineConstants>$(DefineConstants)TRACE;DEBUG;UNMANAGED;DESKTOP</DefineConstants>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Content Include="7z.dll" Pack="False">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="7z64.dll" Pack="False">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <None Update="7z.dll" Pack="true" PackagePath="runtimes/win-x86/native/" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Update="7z64.dll" Pack="true" PackagePath="runtimes/win-x64/native/" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Update="7zArm64.dll" Pack="true" PackagePath="runtimes/win-arm64/native/" CopyToOutputDirectory="PreserveNewest" Visible="false" />
+    <None Include="..\LICENSE" Pack="true" PackagePath="/" Visible="false" />
+    <None Include="..\NOTICE.txt" Pack="true" PackagePath="/" Visible="false" />
+    <None Include="..\README.md" Pack="true" PackagePath="/" Visible="false" />
     <None Include="SevenZip.snk" />
   </ItemGroup>
+
 </Project>

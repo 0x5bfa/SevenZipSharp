@@ -1,0 +1,4 @@
+FreeLibrary
+GetProcAddress
+LoadLibrary
+PropVariantClear

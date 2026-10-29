@@ -30,50 +30,16 @@ namespace SevenZip
         /// </remarks>
         private static string _libraryFileName;
 
-        [LibraryImport("api-ms-win-core-wow64-l1-1-1.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool IsWow64Process2(
-                IntPtr process,
-                out ushort processMachine,
-                out ushort nativeMachine);
-
-        // https://stackoverflow.com/questions/54456140/how-to-detect-were-running-under-the-arm64-version-of-windows-10-in-net
-        // https://docs.microsoft.com/en-us/windows/win32/sysinfo/image-file-machine-constants
-        private static bool? isRunningOnArm = null;
-
-        public static bool IsRunningOnArm
-        {
-            get
-            {
-                if (isRunningOnArm == null)
-                {
-                    isRunningOnArm = IsArmProcessor();
-                    Debug.WriteLine("Running on ARM: {0}", isRunningOnArm);
-                }
-                return isRunningOnArm ?? false;
-            }
-        }
-
-        private static bool IsArmProcessor()
-        {
-            var handle = Process.GetCurrentProcess().Handle;
-            if (!IsWow64Process2(handle, out _, out var nativeMachine))
-            {
-                return false;
-            }
-            return (nativeMachine == 0xaa64 ||
-                    nativeMachine == 0x01c0 ||
-                    nativeMachine == 0x01c2 ||
-                    nativeMachine == 0x01c4);
-        }
-
         private static string DetermineLibraryFilePath()
         {
-            var isRunningOnArm = IsRunningOnArm;
-            var is64BitProcess = Environment.Is64BitProcess;
-            var libraryFileName = isRunningOnArm ? "7zArm64.dll" : is64BitProcess ? "7z64.dll" : "7z.dll";
+            var (runtimeIdentifier, libraryFileName) = RuntimeInformation.ProcessArchitecture switch
+            {
+                Architecture.X86 => ("win-x86", "7z.dll"),
+                Architecture.X64 => ("win-x64", "7z64.dll"),
+                Architecture.Arm64 => ("win-arm64", "7zArm64.dll"),
+                _ => throw new PlatformNotSupportedException($"The process architecture '{RuntimeInformation.ProcessArchitecture}' is not supported.")
+            };
 
-            var runtimeIdentifier = isRunningOnArm ? "win-arm64" : is64BitProcess ? "win-x64" : "win-x86";
             var runtimeLibraryPath = Path.Combine(AppContext.BaseDirectory, "runtimes", runtimeIdentifier, "native", libraryFileName);
             if (File.Exists(runtimeLibraryPath))
             {

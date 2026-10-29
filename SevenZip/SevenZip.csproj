@@ -5,9 +5,11 @@
     <TargetFramework>net10.0</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsAotCompatible>true</IsAotCompatible>
-    <NoWarn>$(NoWarn);CS3016</NoWarn>
+    <!-- CsWin32's public Win32 projections intentionally include non-CLS types. -->
+    <NoWarn>$(NoWarn);CS3016;CS3001;CS3002;CS3003;CS3008;CS3009</NoWarn>
     <Configurations>Debug;Release</Configurations>
     <DefineConstants>$(DefineConstants);UNMANAGED</DefineConstants>
+    <CsWin32RunAsBuildTask>true</CsWin32RunAsBuildTask>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,6 +32,10 @@
     <RepositoryUrl>https://github.com/files-community/SevenZipSharp</RepositoryUrl>
     <Copyright>Copyright (C) Markovtsev Vadim 2009, 2010, licensed under LGPLv3;Copyright (c) Files Community (modifications)</Copyright>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.367" PrivateAssets="all" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="7z.dll" Pack="true" PackagePath="runtimes/win-x86/native/" CopyToOutputDirectory="PreserveNewest" Visible="false" />

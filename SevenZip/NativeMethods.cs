@@ -3,23 +3,41 @@
 namespace SevenZip
 {
     using System;
-    using System.Runtime.InteropServices;
+    using System.Runtime.CompilerServices;
+    using System.Text;
+    using Windows.Win32;
+    using Windows.Win32.Foundation;
+    using Windows.Win32.System.Com.StructuredStorage;
 
 #if UNMANAGED
     internal static partial class NativeMethods
     {
-        [LibraryImport("kernel32.dll", EntryPoint = "LoadLibraryW", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
-        public static partial IntPtr LoadLibrary(string fileName);
+        public static unsafe IntPtr LoadLibrary(string fileName)
+        {
+            fixed (char* fileNamePointer = fileName)
+            {
+                return PInvoke.LoadLibrary((PCWSTR)fileNamePointer);
+            }
+        }
 
-        [LibraryImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static partial bool FreeLibrary(IntPtr hModule);
+        public static bool FreeLibrary(IntPtr hModule)
+        {
+            return PInvoke.FreeLibrary((HMODULE)hModule);
+        }
 
-        [LibraryImport("kernel32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf8)]
-        public static partial IntPtr GetProcAddress(IntPtr hModule, string procName);
+        public static unsafe IntPtr GetProcAddress(IntPtr hModule, string procName)
+        {
+            var procNameBytes = Encoding.ASCII.GetBytes(procName + '\0');
+            fixed (byte* procNamePointer = procNameBytes)
+            {
+                return PInvoke.GetProcAddress((HMODULE)hModule, (PCSTR)procNamePointer);
+            }
+        }
 
-        [LibraryImport("ole32.dll")]
-        public static partial int PropVariantClear(ref PropVariant propVariant);
+        public static int PropVariantClear(ref PropVariant propVariant)
+        {
+            return PInvoke.PropVariantClear(ref Unsafe.As<PropVariant, PROPVARIANT>(ref propVariant)).Value;
+        }
 
         public static T SafeCast<T>(PropVariant var, T def)
         {
